@@ -12,6 +12,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageStateClass extends State<HomePage> {
+  String _newNumbersContent = '';
+  var _valueX = "Hola Calculadora!";
+  double? _firstNumber;
+  String _op = 'No';
+  double? _res;
+
+  _HomePageStateClass();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _deviceHeight = MediaQuery.of(context).size.height;
@@ -33,12 +46,14 @@ class _HomePageStateClass extends State<HomePage> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _ingresedNumberText("1234", context),
-              _rowDelete('C', '<'),
+              _ingresedNumberText(
+                  _newNumbersContent == '' ? _valueX : _newNumbersContent,
+                  context),
+              _rowDelete('C'),
               _rowNumbers('1', '2', '3', '+'),
               _rowNumbers('4', '5', '6', '-'),
               _rowNumbers('7', '8', '9', '*'),
-              _rowNumbers('.', '0', '=', '/'),
+              _rowNumbers('<', '0', '=', '/'),
             ],
           ),
         ),
@@ -59,21 +74,17 @@ class _HomePageStateClass extends State<HomePage> {
     );
   }
 
-  Widget _rowDelete(_var1, _var2) {
+  Widget _rowDelete(_var1) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         _numberButton(_var1),
-        _numberButton(_var2),
       ],
     );
   }
 
   Widget _numberButton(var _number) {
     return Container(
-      margin: _number == 'C' || _number == '<'
-          ? const EdgeInsets.only(left: 40)
-          : const EdgeInsets.all(0),
       height: _deviceHeight * 0.075,
       width: _deviceWidth * 0.15,
       decoration: BoxDecoration(
@@ -91,7 +102,95 @@ class _HomePageStateClass extends State<HomePage> {
         ),
       ),
       child: MaterialButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            if (_number == '1' ||
+                _number == '2' ||
+                _number == '3' ||
+                _number == '4' ||
+                _number == '5' ||
+                _number == '6' ||
+                _number == '1' ||
+                _number == '7' ||
+                _number == '8' ||
+                _number == '9' ||
+                _number == '0') {
+              if (_newNumbersContent == _firstNumber.toString()) {
+                _newNumbersContent = '';
+              }
+              if (_newNumbersContent == _res.toString() && _res != 0) {
+                _newNumbersContent = '';
+                _res = 0;
+              } else {
+                _newNumbersContent = '$_newNumbersContent$_number';
+              }
+            } else if (_number == 'C') {
+              _newNumbersContent = '';
+              _firstNumber = 0;
+              _op = 'No';
+            } else if (_number == '.') {
+              _newNumbersContent = '$_newNumbersContent.';
+            } else if (_number == '<') {
+              if (_newNumbersContent.isNotEmpty) {
+                _newNumbersContent = _newNumbersContent.substring(
+                    0, _newNumbersContent.length - 1);
+              }
+            } else if (_number == '+') {
+              if (_op == 'No') {
+                var _ingresedNum = int.parse(_newNumbersContent);
+                _firstNumber = _ingresedNum.toDouble();
+                _newNumbersContent = _firstNumber!.toString();
+                _op = '+';
+                print('_firstNumber: $_firstNumber \n _op: $_op');
+              }
+            } else if (_number == '-') {
+              if (_op == 'No') {
+                _firstNumber = int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _firstNumber!.toString();
+                _op = '-';
+                print('_firstNumber: $_firstNumber \n _op: $_op');
+              }
+            } else if (_number == '*') {
+              if (_op == 'No') {
+                _firstNumber = int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _firstNumber!.toString();
+                _op = '*';
+                print('_firstNumber: $_firstNumber \n _op: $_op');
+              }
+            } else if (_number == '/') {
+              if (_op == 'No') {
+                _firstNumber = int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _firstNumber!.toString();
+                _op = '/';
+                print('_firstNumber: $_firstNumber \n _op: $_op');
+              }
+            } else if (_number == '=') {
+              if (_op == '+') {
+                _res = _firstNumber! +
+                    int.parse(_newNumbersContent).toDouble().round();
+                _newNumbersContent = _res!.toString();
+                _op == 'No';
+                _firstNumber = 0;
+              } else if (_op == '-') {
+                _res = _firstNumber! - int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _res!.toString();
+                _op == 'No';
+                _firstNumber = 0;
+              } else if (_op == '*') {
+                _res = _firstNumber! * int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _res!.toString();
+                _op == 'No';
+                _firstNumber = 0;
+              } else if (_op == '/') {
+                _res = _firstNumber!.toDouble() /
+                    int.parse(_newNumbersContent).toDouble();
+                _newNumbersContent = _res!.toString();
+                _op == 'No';
+                _firstNumber = 0;
+              }
+            }
+          });
+        },
         child: Text(
           _number,
           style: const TextStyle(
