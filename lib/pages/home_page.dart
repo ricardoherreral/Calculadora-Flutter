@@ -17,6 +17,7 @@ class _HomePageStateClass extends State<HomePage> {
   double? _firstNumber;
   String _op = 'No';
   double? _res;
+  String _themeMode = 'darkMode';
 
   _HomePageStateClass();
 
@@ -31,6 +32,24 @@ class _HomePageStateClass extends State<HomePage> {
     final _deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: _deviceHeight * 0.07,
+        actions: [
+          IconButton(
+            onPressed: _displayLightDarkMode,
+            icon: const Icon(
+              Icons.more_vert_outlined,
+            ),
+          ),
+        ],
+        title: const Text(
+          'Calculadora!',
+          style: TextStyle(
+            fontSize: 25,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Container(
           decoration:
@@ -59,6 +78,49 @@ class _HomePageStateClass extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _displayLightDarkMode() {
+    showDialog(
+        context: context,
+        builder: (BuildContext _context) {
+          return AlertDialog(
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.light_mode),
+                  alignment: Alignment.centerLeft,
+                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  iconSize: _deviceHeight * 0.05,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.dark_mode_rounded),
+                  alignment: Alignment.centerRight,
+                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  iconSize: _deviceHeight * 0.05,
+                ),
+              ],
+            ),
+            backgroundColor: _themeMode == 'darkMode'
+                ? const Color.fromRGBO(
+                    66,
+                    66,
+                    66,
+                    1.0,
+                  )
+                : Colors.white,
+            title: Text(
+              _themeMode == 'darkMode' ? 'Dark Mode 🌙' : 'Light Mode ☀️',
+              style: TextStyle(
+                color: _themeMode == 'darkMode' ? Colors.white : Colors.black,
+                fontSize: 25,
+              ),
+            ),
+          );
+        });
   }
 
   Widget _rowNumbers(_num1, _num2, _num3, _num4) {
