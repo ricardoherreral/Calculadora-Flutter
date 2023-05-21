@@ -166,8 +166,7 @@ class _HomePageStateClass extends State<HomePage> {
               }
             } else if (_number == '=') {
               if (_op == '+') {
-                _res = _firstNumber! +
-                    int.parse(_newNumbersContent).toDouble().round();
+                _res = _firstNumber! + int.parse(_newNumbersContent).toDouble();
                 _newNumbersContent = _res!.toString();
                 _op == 'No';
                 _firstNumber = 0;
