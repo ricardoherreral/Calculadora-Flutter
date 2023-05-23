@@ -1,3 +1,4 @@
+import 'package:calculadora/pages/config_page.dart';
 import 'package:flutter/material.dart';
 
 late double _deviceHeight, _deviceWidth;
@@ -36,7 +37,8 @@ class _HomePageStateClass extends State<HomePage> {
         toolbarHeight: _deviceHeight * 0.07,
         actions: [
           IconButton(
-            onPressed: _displayLightDarkMode,
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ConfigPage())),
             icon: const Icon(
               Icons.more_vert_outlined,
             ),
