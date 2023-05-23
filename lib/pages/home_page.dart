@@ -1,6 +1,10 @@
+import 'package:calculadora/theme/theme_constants.dart';
+import 'package:calculadora/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 
 late double _deviceHeight, _deviceWidth;
+
+ThemeManager _themeManager = ThemeManager();
 
 class HomePage extends StatefulWidget {
   HomePage();
@@ -22,62 +26,62 @@ class _HomePageStateClass extends State<HomePage> {
   _HomePageStateClass();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final _deviceHeight = MediaQuery.of(context).size.height;
     final _deviceWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: _deviceHeight * 0.07,
-        actions: [
-          IconButton(
-            onPressed: _displayLightDarkMode,
-            icon: const Icon(
-              Icons.more_vert_outlined,
+    return MaterialApp(
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: _themeManager.themeMode,
+        home: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: _deviceHeight * 0.07,
+            actions: [
+              Switch(
+                  value: _themeManager.themeMode == ThemeMode.dark,
+                  onChanged: (newValue) {
+                    _themeManager.toggleTheme(newValue);
+                    print('Cambió: $newValue');
+                  }),
+            ],
+            title: const Text(
+              'Calculadora!',
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.white,
+              ),
             ),
           ),
-        ],
-        title: const Text(
-          'Calculadora!',
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.white,
+          body: SafeArea(
+            child: Container(
+              decoration:
+                  const BoxDecoration(//color: Color.fromRGBO(30, 30, 30, 1.0)
+                      ),
+              height: _deviceHeight,
+              width: _deviceWidth,
+              padding: EdgeInsets.symmetric(
+                horizontal: _deviceWidth * 0.05,
+                vertical: _deviceHeight * 0.1,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _ingresedNumberText(
+                      _newNumbersContent == '' ? _valueX : _newNumbersContent,
+                      context),
+                  _rowDelete('C'),
+                  _rowNumbers('1', '2', '3', '+'),
+                  _rowNumbers('4', '5', '6', '-'),
+                  _rowNumbers('7', '8', '9', '*'),
+                  _rowNumbers('<', '0', '=', '/'),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      body: SafeArea(
-        child: Container(
-          decoration:
-              const BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1.0)),
-          height: _deviceHeight,
-          width: _deviceWidth,
-          padding: EdgeInsets.symmetric(
-            horizontal: _deviceWidth * 0.05,
-            vertical: _deviceHeight * 0.1,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _ingresedNumberText(
-                  _newNumbersContent == '' ? _valueX : _newNumbersContent,
-                  context),
-              _rowDelete('C'),
-              _rowNumbers('1', '2', '3', '+'),
-              _rowNumbers('4', '5', '6', '-'),
-              _rowNumbers('7', '8', '9', '*'),
-              _rowNumbers('<', '0', '=', '/'),
-            ],
-          ),
-        ),
-      ),
-    );
+        ));
   }
 
   void _displayLightDarkMode() {
@@ -92,30 +96,30 @@ class _HomePageStateClass extends State<HomePage> {
                   onPressed: () {},
                   icon: const Icon(Icons.light_mode),
                   alignment: Alignment.centerLeft,
-                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  // color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
                   iconSize: _deviceHeight * 0.05,
                 ),
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.dark_mode_rounded),
                   alignment: Alignment.centerRight,
-                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  // color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
                   iconSize: _deviceHeight * 0.05,
                 ),
               ],
             ),
-            backgroundColor: _themeMode == 'darkMode'
-                ? const Color.fromRGBO(
-                    66,
-                    66,
-                    66,
-                    1.0,
-                  )
-                : Colors.white,
+            // backgroundColor: _themeMode == 'darkMode'
+            //     ? const Color.fromRGBO(
+            //         66,
+            //         66,
+            //         66,
+            //         1.0,
+            //       )
+            //     : Colors.white,
             title: Text(
               _themeMode == 'darkMode' ? 'Dark Mode 🌙' : 'Light Mode ☀️',
-              style: TextStyle(
-                color: _themeMode == 'darkMode' ? Colors.white : Colors.black,
+              style: const TextStyle(
+                // color: _themeMode == 'darkMode' ? Colors.white : Colors.black,
                 fontSize: 25,
               ),
             ),
