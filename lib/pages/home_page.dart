@@ -1,3 +1,4 @@
+
 import '../theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,7 @@ class _HomePageStateClass extends State<HomePage> {
       child: _buildUI(),
     );
   }
-
+  
   Widget _buildUI() {
     return Builder(builder: (_context) {
       _themeProvider = _context.watch<ThemeManager>();
@@ -96,6 +97,15 @@ class _HomePageStateClass extends State<HomePage> {
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: _deviceHeight * 0.07,
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ConfigPage())),
+            icon: const Icon(
+              Icons.more_vert_outlined,
             ),
           ),
         ),
