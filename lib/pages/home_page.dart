@@ -1,7 +1,11 @@
-import 'package:calculadora/pages/config_page.dart';
+
+import '../theme/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 late double _deviceHeight, _deviceWidth;
+
+ThemeManager? _themeProvider;
 
 class HomePage extends StatefulWidget {
   HomePage();
@@ -18,20 +22,81 @@ class _HomePageStateClass extends State<HomePage> {
   double? _firstNumber;
   String _op = 'No';
   double? _res;
-  String _themeMode = 'darkMode';
+  bool _darkMode = true;
 
   _HomePageStateClass();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final _deviceHeight = MediaQuery.of(context).size.height;
-    final _deviceWidth = MediaQuery.of(context).size.width;
-
+    _deviceHeight = MediaQuery.of(context).size.height;
+    _deviceWidth = MediaQuery.of(context).size.width;
+    return ChangeNotifierProvider(
+      create: (_context) => ThemeManager(),
+      child: _buildUI(),
+    );
+  }
+  
+  Widget _buildUI() {
+    return Builder(builder: (_context) {
+      _themeProvider = _context.watch<ThemeManager>();
+      return Scaffold(
+        appBar: AppBar(
+          toolbarHeight: _deviceHeight * 0.07,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext _context) {
+                        return AlertDialog(
+                          backgroundColor: _themeProvider!.getActualMode()
+                              ? Colors.white
+                              : const Color.fromRGBO(66, 66, 66, 1.0),
+                          title: Text(
+                            'THEME MODE: ',
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: _themeProvider!.getActualMode()
+                                  ? const Color.fromRGBO(66, 66, 66, 1.0)
+                                  : Colors.white,
+                            ),
+                          ),
+                          actions: [
+                            Center(
+                              child: IconButton(
+                                icon: Icon(
+                                  _themeProvider!.getActualMode()
+                                      ? Icons.dark_mode
+                                      : Icons.light_mode,
+                                  color: Colors.amber,
+                                  size: 30,
+                                ),
+                                onPressed: () async {
+                                  print("ANTES: $_darkMode");
+                                  _darkMode =
+                                      _themeProvider!.changeTheme(_darkMode);
+                                  print("Despues: $_darkMode");
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 500),
+                                  );
+                                  Navigator.pop(_context);
+                                },
+                              ),
+                            )
+                          ],
+                        );
+                      });
+                },
+                icon: const Icon(
+                  Icons.menu,
+                  color: Colors.white,
+                ))
+          ],
+          title: const Text(
+            'Calculadora!',
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.white,
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: _deviceHeight * 0.07,
@@ -43,43 +108,38 @@ class _HomePageStateClass extends State<HomePage> {
               Icons.more_vert_outlined,
             ),
           ),
-        ],
-        title: const Text(
-          'Calculadora!',
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.white,
+        ),
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+                color: _themeProvider!.getActualMode()
+                    ? Colors.white
+                    : Color.fromRGBO(30, 30, 30, 1.0)),
+            height: _deviceHeight,
+            width: _deviceWidth,
+            padding: EdgeInsets.symmetric(
+              horizontal: _deviceWidth * 0.05,
+              vertical: _deviceHeight * 0.1,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _ingresedNumberText(
+                    _newNumbersContent == '' ? _valueX : _newNumbersContent,
+                    context),
+                _rowDelete('C'),
+                _rowNumbers('1', '2', '3', '+'),
+                _rowNumbers('4', '5', '6', '-'),
+                _rowNumbers('7', '8', '9', '*'),
+                _rowNumbers('<', '0', '=', '/'),
+              ],
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Container(
-          decoration:
-              const BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1.0)),
-          height: _deviceHeight,
-          width: _deviceWidth,
-          padding: EdgeInsets.symmetric(
-            horizontal: _deviceWidth * 0.05,
-            vertical: _deviceHeight * 0.1,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _ingresedNumberText(
-                  _newNumbersContent == '' ? _valueX : _newNumbersContent,
-                  context),
-              _rowDelete('C'),
-              _rowNumbers('1', '2', '3', '+'),
-              _rowNumbers('4', '5', '6', '-'),
-              _rowNumbers('7', '8', '9', '*'),
-              _rowNumbers('<', '0', '=', '/'),
-            ],
-          ),
-        ),
-      ),
-    );
+      );
+    });
   }
 
   void _displayLightDarkMode() {
@@ -94,30 +154,30 @@ class _HomePageStateClass extends State<HomePage> {
                   onPressed: () {},
                   icon: const Icon(Icons.light_mode),
                   alignment: Alignment.centerLeft,
-                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  // color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
                   iconSize: _deviceHeight * 0.05,
                 ),
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.dark_mode_rounded),
                   alignment: Alignment.centerRight,
-                  color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
+                  // color: _themeMode != 'darkMode' ? Colors.white : Colors.amber,
                   iconSize: _deviceHeight * 0.05,
                 ),
               ],
             ),
-            backgroundColor: _themeMode == 'darkMode'
-                ? const Color.fromRGBO(
-                    66,
-                    66,
-                    66,
-                    1.0,
-                  )
-                : Colors.white,
+            // backgroundColor: _themeMode == 'darkMode'
+            //     ? const Color.fromRGBO(
+            //         66,
+            //         66,
+            //         66,
+            //         1.0,
+            //       )
+            //     : Colors.white,
             title: Text(
-              _themeMode == 'darkMode' ? 'Dark Mode 🌙' : 'Light Mode ☀️',
-              style: TextStyle(
-                color: _themeMode == 'darkMode' ? Colors.white : Colors.black,
+              _darkMode == 'darkMode' ? 'Dark Mode 🌙' : 'Light Mode ☀️',
+              style: const TextStyle(
+                // color: _themeMode == 'darkMode' ? Colors.white : Colors.black,
                 fontSize: 25,
               ),
             ),
